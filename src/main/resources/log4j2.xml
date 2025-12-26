@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <!-- Define properties for reuse -->
+    <Properties>
+        <Property name="LOG_DIR">target/logs</Property>
+        <Property name="LOG_PATTERN">[%d{yyyy-MM-dd HH:mm:ss}] [%t] [%-5p] [%c{1}.%M(%L)] - %m%n</Property>
+    </Properties>
+
+    <Appenders>
+        <!-- Console Appender -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- Rolling File Appender -->
+        <RollingFile name="RollingFileAppender"
+                     fileName="${LOG_DIR}/test-automation.log"
+                     filePattern="${LOG_DIR}/test-automation-%d{yyyy-MM-dd}-%i.log"
+                     createOnDemand="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="30"/>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- Framework package logs at DEBUG level -->
+        <Logger name="org.epam" level="DEBUG" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="RollingFileAppender"/>
+        </Logger>
+
+        <!-- Suppress verbose Selenium logs -->
+        <Logger name="org.openqa.selenium" level="WARN"/>
+        <Logger name="org.apache.http" level="WARN"/>
+
+        <!-- Root logger -->
+        <Root level="INFO">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="RollingFileAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
+
